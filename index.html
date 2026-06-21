@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualisation de mon fichier</title>
+    <!-- Ce lien permet de transformer le CSV en un beau tableau automatiquement -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: sans-serif; margin: 40px; color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f4f5f7; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+
+    <h2>Données de mon fichier CSV</h2>
+    <div id="tableau-contenu">Chargement des données...</div>
+
+    <script>
+        // Remplacez simplement "monfichier.csv" par le nom exact de votre fichier
+        const fichierCSV = "LaTChaux24.csv"; 
+
+        Papa.parse(fichierCSV, {
+            download: true,
+            header: false,
+            complete: function(results) {
+                let html = '<table>';
+                results.data.forEach((row, index) => {
+                    // Supprime les lignes vides du CSV
+                    if(row.join('').trim() === '') return; 
+                    
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '<table>';
+                document.getElementById('tableau-contenu').innerHTML = html;
+            }
+        });
+    </script>
+
+</body>
+</html>
