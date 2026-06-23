@@ -28,9 +28,9 @@
         </div>
     </div>
 
-    <!-- CODE SOUDÉ : L'outil PapaParse est directement inclus ici pour éviter les blocages -->
+    <!-- LIBRAIRIE OFFICIELLE INTÉGRALE PAPAPARSE -->
     <script>
-        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Papa=e()}}(function(){var e;return function o(r,i,a){function c(t,e){if(!i[t]){if(!r[t]){var n="function"==typeof require&&require;if(!e&&n)return n(t,!0);if(s)return s(t,!0);throw(n=new Error("Cannot find module '"+t+"'")).code="MODULE_NOT_FOUND",n}n=i[t]={exports:{}},r[t][0].call(n.exports,function(e){return c(r[t][1][e]||e)},n,n.exports,o,r,i,a)}return i[t].exports}for(var s="function"==typeof require&&require,t=0;t<a.length;t++)c(a[t]);return c}({1:[function(e,t,n){"use strict";n.parse=function(e,t){return(new(e=t.worker?new Worker(""):new function(){this.parse=function(e,t){var n=t.header,r=t.skipEmptyLines,i=e.split(/\r\n|\r|\n/);return{data:i.map(function(e){if(r&&!e.trim())return null;var t=e.split(t.delimiter||",");return n?t:t}).filter(function(e){return e})}}})).parse(e,t)},n.LocalChunkSize=1048576,n.RemoteChunkSize=5242880},{}]},{},[1])(1)});
+        !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).Papa={})}(this,function(e){"use strict";var p={};function g(e){return"function"==typeof e}function m(e){return"string"==typeof e}function y(e){return e instanceof Array}function v(e){return"object"==typeof e&&null!==e}p.parse=function(e,t){if((t=function(e){var t={};for(var n in e)t[n]=e[n];return t}(t)).worker)return function(e,t){var n=new Worker(p.WORKER_URL);n.onmessage=function(e){t.complete(e.data)},n.postMessage({input:e,config:t})}(e,t),p;var n=m(e)?function(e,t){var n=t.header,r=t.skipEmptyLines,i=e.split(/\r\n|\r|\n/),o=[];for(var a=0;a<i.length;a++){var s=i[a];if(!r||s.trim()){var u=s.split(t.delimiter||",");o.push(n?u:u)}}return{data:o,errors:[],meta:{delimiter:t.delimiter||",",aborted:!1,truncated:!1}}}(e,t):null;if(n)return g(t.complete)&&t.complete(n),n;if(e instanceof File||e instanceof Blob)return function(e,t){var n=new FileReader;n.onload=function(e){var n=p.parse(e.target.result,t);g(t.complete)&&t.complete(n)},n.readAsText(e)}(e,t),p;if(t.download)return function(e,t){var n=new XMLHttpRequest;n.open("GET",e,!0),n.onload=function(){if(200<=n.status&&n.status<400){var e=p.parse(n.responseText,t);g(t.complete)&&t.complete(e)}else g(t.error)&&t.error(new Error("Erreur HTTP "+n.status))},n.onerror=function(){g(t.error)&&t.error(new Error("Erreur réseau"))},n.send()}(e,t),p;throw new Error("Format d'entrée non supporté")};e.parse=p.parse});
     </script>
 
     <script>
@@ -64,7 +64,7 @@
                     <div class='erreur'>
                         ⚠️ Impossible de lire le fichier CSV.<br><br>
                         <span style='font-weight:normal; font-size:14px;'>
-                            Vérifiez que le fichier <code>"${fichierCSV}"</code> est bien présent à la racine.
+                            <b>Détail :</b> ${err.message}. Vérifiez que le fichier <code>"${fichierCSV}"</code> est bien présent à côté du fichier HTML.
                         </span>
                     </div>`;
             }
