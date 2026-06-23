@@ -3,48 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
-    <!-- CORRECTION 1 : Lien exact pour charger la bibliothèque PapaParse -->
-    <script src="https://cloudflare.com"></script>
+    <!-- Outil officiel de lecture de CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         body { font-family: sans-serif; margin: 40px; color: #333; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         th { background-color: #f4f5f7; font-weight: bold; }
         tr:nth-child(even) { background-color: #f9f9f9; }
+        .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h2>Données de mon fichier CSV</h2>
-    <div id="tableau-contenu">Chargement des données...</div>
+    <div id="tableau-contenu">Chargement des données en cours...</div>
 
     <script>
-        // CORRECTION 2 : Mettez votre lien complet débutant par https://githubusercontent.com...
-        const fichierCSV = "LaTChaux24.csv"; 
+        // Mettez uniquement le nom de votre fichier CSV ici (ex: "data.csv")
+        const fichierCSV = "monfichier.csv"; 
 
-        Papa.parse(fichierCSV, {
-            download: true,
-            header: false,
-            complete: function(results) {
-                let html = '<table>';
-                results.data.forEach((row, index) => {
-                    // Supprime les lignes vides du CSV
-                    if(row.join('').trim() === '') return; 
-                    
-                    html += '<tr>';
-                    row.forEach(cell => {
-                        html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+        // Vérification de sécurité pour s'assurer que l'outil de lecture est bien chargé
+        if (typeof Papa === 'undefined') {
+            document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Erreur critique : L'outil PapaParse n'a pas pu être chargé depuis internet. Vérifiez votre connexion ou les restrictions de votre réseau.</div>";
+        } else {
+            Papa.parse(fichierCSV, {
+                download: true,
+                header: false,
+                skipEmptyLines: true, // Supprime automatiquement les lignes vides
+                complete: function(results) {
+                    if (!results.data || results.data.length === 0) {
+                        document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV a été trouvé mais il semble complètement vide.</div>";
+                        return;
+                    }
+
+                    let html = '<table>';
+                    results.data.forEach((row, index) => {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                        });
+                        html += '</tr>';
                     });
-                    html += '</tr>';
-                });
-                // CORRECTION 3 : Fermeture correcte de la balise HTML du tableau
-                html += '</table>'; 
-                document.getElementById('tableau-contenu').innerHTML = html;
-            },
-            error: function(err) {
-                document.getElementById('tableau-contenu').innerHTML = "<p style='color:red;'>Erreur lors du chargement du fichier CSV. Vérifiez votre lien RAW.</p>";
-            }
-        });
+                    html += '</table>';
+                    document.getElementById('tableau-contenu').innerHTML = html;
+                },
+                error: function(err) {
+                    // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
+                    document.getElementById('tableau-contenu').innerHTML = `
+                        <div class='erreur'>
+                            ⚠️ Impossible de lire le fichier CSV.<br><br>
+                            <span style='font-weight:normal; font-size:14px;'>
+                                <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> est introuvable à la racine de votre projet ou son nom contient une erreur de majuscule/minuscule.
+                            </span>
+                        </div>`;
+                }
+            });
+        }
     </script>
 
 </body>
+</html>
