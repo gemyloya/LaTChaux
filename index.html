@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
-    <!-- Ce lien permet de transformer le CSV en un beau tableau automatiquement -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- CORRECTION 1 : Lien exact pour charger la bibliothèque PapaParse -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body { font-family: sans-serif; margin: 40px; color: #333; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -19,8 +19,8 @@
     <div id="tableau-contenu">Chargement des données...</div>
 
     <script>
-        // Remplacez simplement "monfichier.csv" par le nom exact de votre fichier
-        const fichierCSV = "LaTChaux24.csv"; 
+        // CORRECTION 2 : Mettez votre lien complet débutant par https://githubusercontent.com...
+        const fichierCSV = "https://raw.githubusercontent.com/gemyloya/LaTChaux/refs/heads/main/LaTChaux24.csv"; 
 
         Papa.parse(fichierCSV, {
             download: true,
@@ -37,11 +37,14 @@
                     });
                     html += '</tr>';
                 });
-                html += '<table>';
+                // CORRECTION 3 : Fermeture correcte de la balise HTML du tableau
+                html += '</table>'; 
                 document.getElementById('tableau-contenu').innerHTML = html;
+            },
+            error: function(err) {
+                document.getElementById('tableau-contenu').innerHTML = "<p style='color:red;'>Erreur lors du chargement du fichier CSV. Vérifiez votre lien RAW.</p>";
             }
         });
     </script>
 
 </body>
-</html>
