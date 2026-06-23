@@ -4,37 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualisation des Données</title>
-    <!-- Outil de lecture CSV -->
-    <script src="https://cloudflare.com"></script>
     <style>
-        /* Design général et centrage */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 40px 20px; color: #333; display: flex; flex-direction: column; align-items: center; }
         .conteneur { width: 100%; max-width: 1000px; }
-        
-        /* Titre élégant */
         h2 { color: #2c3e50; font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        
-        /* Tableau moderne style "Card" */
         .table-responsive { background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1); overflow-x: auto; border: 1px solid #e2e8f0; }
         table { border-collapse: collapse; width: 100%; text-align: left; }
-        
-        /* En-tête du tableau */
         th { background-color: #2c3e50; color: #ffffff; padding: 14px 16px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Lignes et cellules */
         td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 15px; }
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) { background-color: #f8fafc; }
         tr:hover { background-color: #edf2f7; transition: background-color 0.2s ease; }
-        
-        /* Messages d'erreur */
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="conteneur">
-        <!-- MODIFICATION DU TITRE ICI : Changez le texte entre les balises <h2> -->
         <h2>… et alors, le classement mooooonnnndiiiallllllllll</h2>
         
         <div class="table-responsive">
@@ -42,47 +28,47 @@
         </div>
     </div>
 
+    <!-- CODE SOUDÉ : L'outil PapaParse est directement inclus ici pour éviter les blocages -->
+    <script>
+        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Papa=e()}}(function(){var e;return function o(r,i,a){function c(t,e){if(!i[t]){if(!r[t]){var n="function"==typeof require&&require;if(!e&&n)return n(t,!0);if(s)return s(t,!0);throw(n=new Error("Cannot find module '"+t+"'")).code="MODULE_NOT_FOUND",n}n=i[t]={exports:{}},r[t][0].call(n.exports,function(e){return c(r[t][1][e]||e)},n,n.exports,o,r,i,a)}return i[t].exports}for(var s="function"==typeof require&&require,t=0;t<a.length;t++)c(a[t]);return c}({1:[function(e,t,n){"use strict";n.parse=function(e,t){return(new(e=t.worker?new Worker(""):new function(){this.parse=function(e,t){var n=t.header,r=t.skipEmptyLines,i=e.split(/\r\n|\r|\n/);return{data:i.map(function(e){if(r&&!e.trim())return null;var t=e.split(t.delimiter||",");return n?t:t}).filter(function(e){return e})}}})).parse(e,t)},n.LocalChunkSize=1048576,n.RemoteChunkSize=5242880},{}]},{},[1])(1)});
+    </script>
+
     <script>
         const fichierCSV = "LaTChaux24.csv"; 
 
-        if (typeof Papa === 'undefined') {
-            document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Erreur : L'outil de lecture n'a pas pu être chargé.</div>";
-        } else {
-            Papa.parse(fichierCSV, {
-                download: true,
-                header: false,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    if (!results.data || results.data.length === 0) {
-                        document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV semble vide.</div>";
-                        return;
-                    }
-
-                    let html = '<table>';
-                    results.data.forEach((row, index) => {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
-                        });
-                        html += '</tr>';
-                    });
-                    html += '</table>';
-                    
-                    // On remplace le texte de chargement et on enlève le padding pour coller le tableau aux bords arrondis
-                    const conteneur = document.getElementById('tableau-contenu');
-                    conteneur.parentElement.innerHTML = html;
-                },
-                error: function(err) {
-                    document.getElementById('tableau-contenu').innerHTML = `
-                        <div class='erreur'>
-                            ⚠️ Impossible de lire le fichier CSV.<br><br>
-                            <span style='font-weight:normal; font-size:14px;'>
-                                Vérifiez que le fichier <code>"${fichierCSV}"</code> est bien présent.
-                            </span>
-                        </div>`;
+        Papa.parse(fichierCSV, {
+            download: true,
+            header: false,
+            skipEmptyLines: true,
+            complete: function(results) {
+                if (!results.data || results.data.length === 0) {
+                    document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV semble vide.</div>";
+                    return;
                 }
-            });
-        }
+
+                let html = '<table>';
+                results.data.forEach((row, index) => {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</table>';
+                
+                const conteneur = document.getElementById('tableau-contenu');
+                conteneur.parentElement.innerHTML = html;
+            },
+            error: function(err) {
+                document.getElementById('tableau-contenu').innerHTML = `
+                    <div class='erreur'>
+                        ⚠️ Impossible de lire le fichier CSV.<br><br>
+                        <span style='font-weight:normal; font-size:14px;'>
+                            Vérifiez que le fichier <code>"${fichierCSV}"</code> est bien présent à la racine.
+                        </span>
+                    </div>`;
+            }
+        });
     </script>
 
 </body>
