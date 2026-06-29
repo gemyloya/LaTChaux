@@ -5,7 +5,7 @@
     <title>Visualisation de mon fichier</title>
     <!-- Outil officiel de lecture de CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-        <style>
+    <style>
         /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
         
@@ -17,7 +17,7 @@
         /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; }
+        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; cursor: pointer; user-select: none; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
     </style>
@@ -46,15 +46,22 @@
                         return;
                     }
 
-                    let html = '<table>';
-                    results.data.forEach((row, index) => {
+                    let html = '<table><thead><tr>';
+                    // Génération de la ligne d'en-tête (index 0)
+                    results.data[0].forEach((cell, columnIndex) => {
+                        html += `<th onclick="trierTableau(${columnIndex})">${cell}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+
+                    // Génération des lignes de données
+                    for (let i = 1; i < results.data.length; i++) {
                         html += '<tr>';
-                        row.forEach(cell => {
-                            html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                        results.data[i].forEach(cell => {
+                            html += `<td>${cell}</td>`;
                         });
                         html += '</tr>';
-                    });
-                    html += '</table>';
+                    }
+                    html += '</tbody></table>';
                     document.getElementById('tableau-contenu').innerHTML = html;
                 },
                 error: function(err) {
@@ -68,6 +75,44 @@
                         </div>`;
                 }
             });
+        }
+
+        // Variable globale pour suivre le sens du tri (croissant / décroissant)
+        let triAscendant = true;
+        let derniereColonne Triee = -1;
+
+        // Fonction de tri native ajoutée pour l'internaute
+        function trierTableau(colonneIndex) {
+            const table = document.querySelector("table tbody");
+            const lignes = Array.from(table.rows);
+
+            // Alterne entre croissant et décroissant si on clique sur la même colonne
+            if (derniereColonneTriee === colonneIndex) {
+                triAscendant = !triAscendant;
+            } else {
+                triAscendant = true;
+                derniereColonneTriee = colonneIndex;
+            }
+
+            lignes.sort((ligneA, ligneB) => {
+                const celluleA = ligneA.cells[colonneIndex].innerText.trim();
+                const celluleB = ligneB.cells[colonneIndex].innerText.trim();
+
+                // Convertit en nombre si possible pour trier numériquement, sinon reste en texte
+                const valeurA = isNaN(celluleA) || celluleA === '' ? celluleA : parseFloat(celluleA);
+                const valeurB = isNaN(celluleB) || celluleB === '' ? celluleB : parseFloat(celluleB);
+
+                if (typeof valeurA === 'number' && typeof valeurB === 'number') {
+                    return triAscendant ? valeurA - valeurB : valeurB - valeurA;
+                } else {
+                    return triAscendant 
+                        ? valeurA.toString().localeCompare(valeurB.toString(), 'fr', {numeric: true})
+                        : valeurB.toString().localeCompare(valeurA.toString(), 'fr', {numeric: true});
+                }
+            });
+
+            // Réinsère les lignes triées dans le tableau sans toucher à l'en-tête
+            lignes.forEach(ligne => table.appendChild(ligne));
         }
     </script>
 
