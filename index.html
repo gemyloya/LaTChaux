@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
     <!-- Outil officiel de lecture de CSV -->
-    <script src="https://cloudflare.com"></script>
-    <!-- MODIFICATION 1 : Script de tri ajouté sous PapaParse -->
-    <script src="https://cloudflare.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
         <style>
         /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
@@ -22,10 +20,6 @@
         th { background-color: #2c3e50; color: #ffffff; font-weight: bold; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
-        
-        /* MODIFICATION 2 : Curseur et survol ajoutés à la fin du style */
-        th { cursor: pointer; }
-        th:hover { background-color: #34495e; }
     </style>
 </head>
 <body>
@@ -62,9 +56,6 @@
                     });
                     html += '</table>';
                     document.getElementById('tableau-contenu').innerHTML = html;
-
-                    // MODIFICATION 3 : Activation du tri placée à la toute fin de la création du tableau
-                    new Tablesort(document.querySelector('table'));
                 },
                 error: function(err) {
                     // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
