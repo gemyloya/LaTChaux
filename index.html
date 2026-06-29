@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
-    <!-- Outils officiels de lecture de CSV et de Tri -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cloudflare.com"></script>
+    <!-- Outil officiel de lecture de CSV -->
     <script src="https://cloudflare.com"></script>
     
     <style>
@@ -20,15 +18,10 @@
         /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        /* En-têtes interactifs pour le tri */
-        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; cursor: pointer; user-select: none; position: relative; }
+        /* Style des en-têtes (Curseur main pour indiquer le clic) */
+        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; cursor: pointer; user-select: none; }
         th:hover { background-color: #34495e; }
         
-        /* Petites flèches discrètes pour indiquer l'état du tri (Montant / Descendant) */
-        th[aria-sort="ascending"]::after { content: " ▲"; font-size: 10px; position: absolute; right: 5px; }
-        th[aria-sort="descending"]::after { content: " ▼"; font-size: 10px; position: absolute; right: 5px; }
-        th:not([aria-sort])::after { content: " ↕"; font-size: 10px; color: #7f8c8d; opacity: 0.5; position: absolute; right: 5px; }
-
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
     </style>
@@ -57,26 +50,20 @@
                         return;
                     }
 
-                    // Ajout des balises obligatoires standard (thead et tbody) pour que Tablesort fonctionne correctement
-                    let html = '<table id="mon-tableau-triable">';
-                    
+                    // VOTRE LOGIQUE D'ORIGINE STRICTEMENT CONSERVÉE
+                    let html = '<table>';
                     results.data.forEach((row, index) => {
-                        if (index === 0) {
-                            html += '<thead><tr>';
-                            row.forEach(cell => { html += `<th>${cell}</th>`; });
-                            html += '</tr></thead><tbody>';
-                        } else {
-                            html += '<tr>';
-                            row.forEach(cell => { html += `<td>${cell}</td>`; });
-                            html += '</tr>';
-                        }
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                        });
+                        html += '</tr>';
                     });
-                    
-                    html += '</tbody></table>';
+                    html += '</table>';
                     document.getElementById('tableau-contenu').innerHTML = html;
 
-                    // Activation de la fonctionnalité de tri une fois le tableau inséré dans la page
-                    new Tablesort(document.getElementById('mon-tableau-triable'));
+                    // AJOUT SÉCURISÉ : Une fonction de tri ultra-simple qui s'active après la création
+                    rendreTriable();
                 },
                 error: function(err) {
                     // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
@@ -84,10 +71,41 @@
                         <div class='erreur'>
                             ⚠️ Impossible de lire le fichier CSV.<br><br>
                             <span style='font-weight:normal; font-size:14px;'>
-                                <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> is introuvable à la racine de votre projet ou son nom contient une erreur de majuscule/minuscule.
+                                <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> est introuvable à la racine de votre projet ou son nom contient une erreur de majuscule/minuscule.
                             </span>
                         </div>`;
                 }
+            });
+        }
+
+        // Fonction de tri maison (légère et sans bibliothèque externe qui bug)
+        function rendreTriable() {
+            const table = document.querySelector("table");
+            if (!table) return;
+            const ths = table.querySelectorAll("th");
+            
+            ths.forEach((th, index) => {
+                let asc = true;
+                th.addEventListener("click", () => {
+                    const rows = Array.from(table.querySelectorAll("tr")).slice(1);
+                    
+                    rows.sort((rowA, rowB) => {
+                        const cellA = rowA.children[index].textContent.trim();
+                        const cellB = rowB.children[index].textContent.trim();
+                        
+                        // Détection automatique si c'est un nombre ou du texte
+                        const numA = parseFloat(cellA);
+                        const numB = parseFloat(cellB);
+                        
+                        if (!isNaN(numA) && !isNaN(numB)) {
+                            return asc ? numA - numB : numB - numA;
+                        }
+                        return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+                    });
+                    
+                    rows.forEach(row => table.appendChild(row));
+                    asc = !asc; // Alterne le sens du tri au prochain clic
+                });
             });
         }
     </script>
