@@ -58,8 +58,26 @@
                     html += '</table>';
                     document.getElementById('tableau-contenu').innerHTML = html;
 
-                    // AJOUT DU TRI : On appelle le trieur une fois le tableau affiché
-                    activerLeTriDuTableau();
+                    // L'UNIQUE AJOUT à votre logique : Activer le clic de tri sur le tableau généré
+                    let table = document.querySelector("table");
+                    if (table) {
+                        table.querySelectorAll("th").forEach((th, index) => {
+                            let asc = true;
+                            th.addEventListener("click", () => {
+                                let lignes = Array.from(table.querySelectorAll("tr")).slice(1);
+                                lignes.sort((a, b) => {
+                                    let valA = a.children[index].textContent.trim();
+                                    let valB = b.children[index].textContent.trim();
+                                    let numA = parseFloat(valA);
+                                    let numB = parseFloat(valB);
+                                    if (!isNaN(numA) && !isNaN(numB)) return asc ? numA - numB : numB - numA;
+                                    return asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                                });
+                                lignes.forEach(l => table.appendChild(l));
+                                asc = !asc;
+                            });
+                        });
+                    }
                 },
                 error: function(err) {
                     // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
@@ -71,36 +89,6 @@
                             </span>
                         </div>`;
                 }
-            });
-        }
-
-        // Script de tri autonome ajouté à la suite, sans toucher au reste
-        function activerLeTriDuTableau() {
-            const table = document.querySelector("table");
-            if (!table) return;
-            const headers = table.querySelectorAll("th");
-            
-            headers.forEach((th, index) => {
-                let ordreCroissant = true;
-                th.addEventListener("click", () => {
-                    const lignes = Array.from(table.querySelectorAll("tr")).slice(1);
-                    
-                    lignes.sort((lignA, lignB) => {
-                        const texteA = lignA.children[index].textContent.trim();
-                        const texteB = lignB.children[index].textContent.trim();
-                        
-                        const numA = parseFloat(texteA);
-                        const numB = parseFloat(texteB);
-                        
-                        if (!isNaN(numA) && !isNaN(numB)) {
-                            return ordreCroissant ? numA - numB : numB - numA;
-                        }
-                        return ordreCroissant ? texteA.localeCompare(texteB) : texteB.localeCompare(texteA);
-                    });
-                    
-                    lignes.forEach(lign => table.appendChild(lign));
-                    ordreCroissant = !ordreCroissant;
-                });
             });
         }
     </script>
