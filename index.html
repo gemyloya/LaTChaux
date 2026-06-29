@@ -5,8 +5,7 @@
     <title>Visualisation de mon fichier</title>
     <!-- Outil officiel de lecture de CSV -->
     <script src="https://cloudflare.com"></script>
-    
-    <style>
+        <style>
         /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
         
@@ -18,10 +17,8 @@
         /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        /* Style des en-têtes (Curseur main pour indiquer le clic) */
         th { background-color: #2c3e50; color: #ffffff; font-weight: bold; cursor: pointer; user-select: none; }
         th:hover { background-color: #34495e; }
-        
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
     </style>
@@ -50,7 +47,6 @@
                         return;
                     }
 
-                    // VOTRE LOGIQUE D'ORIGINE STRICTEMENT CONSERVÉE
                     let html = '<table>';
                     results.data.forEach((row, index) => {
                         html += '<tr>';
@@ -62,8 +58,8 @@
                     html += '</table>';
                     document.getElementById('tableau-contenu').innerHTML = html;
 
-                    // AJOUT SÉCURISÉ : Une fonction de tri ultra-simple qui s'active après la création
-                    rendreTriable();
+                    // AJOUT DU TRI : On appelle le trieur une fois le tableau affiché
+                    activerLeTriDuTableau();
                 },
                 error: function(err) {
                     // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
@@ -78,33 +74,32 @@
             });
         }
 
-        // Fonction de tri maison (légère et sans bibliothèque externe qui bug)
-        function rendreTriable() {
+        // Script de tri autonome ajouté à la suite, sans toucher au reste
+        function activerLeTriDuTableau() {
             const table = document.querySelector("table");
             if (!table) return;
-            const ths = table.querySelectorAll("th");
+            const headers = table.querySelectorAll("th");
             
-            ths.forEach((th, index) => {
-                let asc = true;
+            headers.forEach((th, index) => {
+                let ordreCroissant = true;
                 th.addEventListener("click", () => {
-                    const rows = Array.from(table.querySelectorAll("tr")).slice(1);
+                    const lignes = Array.from(table.querySelectorAll("tr")).slice(1);
                     
-                    rows.sort((rowA, rowB) => {
-                        const cellA = rowA.children[index].textContent.trim();
-                        const cellB = rowB.children[index].textContent.trim();
+                    lignes.sort((lignA, lignB) => {
+                        const texteA = lignA.children[index].textContent.trim();
+                        const texteB = lignB.children[index].textContent.trim();
                         
-                        // Détection automatique si c'est un nombre ou du texte
-                        const numA = parseFloat(cellA);
-                        const numB = parseFloat(cellB);
+                        const numA = parseFloat(texteA);
+                        const numB = parseFloat(texteB);
                         
                         if (!isNaN(numA) && !isNaN(numB)) {
-                            return asc ? numA - numB : numB - numA;
+                            return ordreCroissant ? numA - numB : numB - numA;
                         }
-                        return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+                        return ordreCroissant ? texteA.localeCompare(texteB) : texteB.localeCompare(texteA);
                     });
                     
-                    rows.forEach(row => table.appendChild(row));
-                    asc = !asc; // Alterne le sens du tri au prochain clic
+                    lignes.forEach(lign => table.appendChild(lign));
+                    ordreCroissant = !ordreCroissant;
                 });
             });
         }
