@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <!-- LA TOUCHE MOBILE : Adapte automatiquement le tableau sur smartphone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualisation de mon fichier</title>
     <style>
         /* BASE DE LA PAGE */
@@ -27,7 +29,7 @@
         
         th, td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: center; }
         
-        /* ALIGNEMENT STRICTE DE VOS COLONNES (Pas de gras sur la colonne 1) */
+        /* ALIGNEMENT STRICTE DE VOS COLONNES */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
         th { color: #ffffff; font-weight: 600; transition: background-color 0.3s ease; }
@@ -81,7 +83,6 @@
 
     <div id="tableau-contenu">Chargement des données en cours...</div>
 
-    <!-- Modification ici : la date s'insère dynamiquement dans cette zone -->
     <div class="pied-page">Classements officiels de La T'Chaux — Mis à jour le <span id="date-du-jour"></span></div>
 
     <script>
@@ -148,10 +149,10 @@
             xhr.send();
         }
 
-        // Calcul automatique et affichage de la date du jour au format JJ/MM/AAAA
+        // Calcul de la date du jour
         var aujourdhui = new Date();
         var jj = String(aujourdhui.getDate()).padStart(2, '0');
-        var mm = String(aujourdhui.getMonth() + 1).padStart(2, '0'); // Janvier est 0
+        var mm = String(aujourdhui.getMonth() + 1).padStart(2, '0');
         var aaaa = aujourdhui.getFullYear();
         document.getElementById('date-du-jour').innerText = jj + '/' + mm + '/' + aaaa;
 
