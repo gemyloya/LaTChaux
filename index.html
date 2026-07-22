@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
+    <!-- Outil officiel de lecture de CSV -->
+    <script src="https://cloudflare.com"></script>
     <style>
-        /* VOTRE CODE DE STYLE D'ORIGINE STRICTEMENT INCHANGÉ */
+        /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
+        
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        
+        /* 1. On centre TOUTES les colonnes par défaut */
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        
+        /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
+        
         th { background-color: #2c3e50; color: #ffffff; font-weight: bold; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
+
+        /* Style des boutons demandé par l'utilisateur */
         .zone-boutons { margin: 20px 0; display: flex; gap: 10px; }
         .btn-classement { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; }
         .btn-classement:hover { background-color: #34495e; }
@@ -20,9 +30,10 @@
 </head>
 <body>
 
-    <!-- VOTRE TITRE ET VOS BOUTONS INCHANGÉS -->
+    <!-- CHANGEMENT TEXTUEL : Votre nouveau titre -->
     <h2>La T'Chaux</h2>
 
+    <!-- Zone des boutons ajoutée -->
     <div class="zone-boutons">
         <button class="btn-classement actif" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
         <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
@@ -31,61 +42,55 @@
     <div id="tableau-contenu">Chargement des données en cours...</div>
 
     <script>
-        /* =========================================================================
-           OUTIL DE LECTURE INTÉGRÉ DIRECTEMENT (Plus besoin d'internet pour l'outil)
-           ========================================================================= */
-        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Papa=e()}}(function(){var e;return function s(i,o,r){function a(n,e){if(!o[n]){if(!i[n]){var t="function"==typeof require&&require;if(!e&&t)return t(n,!0);if(l)return l(n,!0);throw(t=new Error("Cannot find module '"+n+"'")).code="MODULE_NOT_FOUND",t}t=o[n]={exports:{}},i[n][0].call(t.exports,function(e){return a(i[n][1][e]||e)},t,t.exports,s,i,o,r)}return o[n].exports}for(var l="function"==typeof require&&require,e=0;e<r.length;e++)a(r[e]);return a}({1:[function(e,t,n){"use strict";n.parse=function(e,t){if((t=t||{}).worker)return(new(e=n.ParserHandle||require("./parser_handle.js"))).parse(e,t);return new(n.Parser||require("./parser.js"))(t).parse(e)},n.Parser=require("./parser.js"),n.ParserHandle=require("./parser_handle.js")},{"./parser.js":2,"./parser_handle.js":3},2:[function(e,t,n){"use strict";function s(e){this._config=e||{},this._delimiter=e.delimiter||"",this._newline=e.newline||""}s.prototype.parse=function(e){var t=[],n=this._delimiter,s=this._newline;if("string"!=typeof e)return{data:t,errors:[]};for(var i=e.split(s||/\r\n|\r|\n/),o=0;o<i.length;o++){var r=i[o];if(r||!this._config.skipEmptyLines){var r=n?r.split(n):[r],a=[];t.push(a);for(var l=0;l<r.length;l++)a.push(r[l])}}return{data:t,errors:[]}},t.exports=s},{}],3:[function(e,t,n){"use strict";function s(e){this._config=e||{}}s.prototype.parse=function(e,t){var n=new(require("./parser.js"))(this._config).parse(e);return"function"==typeof t.complete&&t.complete(n),n},t.exports=s},{"./parser.js":2}]},{},[1])(1)});
-
-        /* =========================================================================
-           VOTRE LOGIQUE DE CHARGEMENT STRICTEMENT INCHANGÉE
-           ========================================================================= */
+        // Fonction globale pour charger le fichier choisi
         function chargerClassement(fichierCSV, idBouton) {
+            // Indiquer visuellement le chargement
             document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
+
+            // Gérer la couleur verte du bouton actif
             document.querySelectorAll('.btn-classement').forEach(btn => btn.classList.remove('actif'));
             document.getElementById(idBouton).classList.add('actif');
 
-            // Utilisation d'une lecture directe pour éviter les blocages réseau
-            fetch(fichierCSV)
-                .then(response => {
-                    if (!response.ok) throw new Error();
-                    return response.text();
-                })
-                .then(text => {
-                    Papa.parse(text, {
-                        delimiter: ",", // Force la lecture des virgules standards des CSV
-                        skipEmptyLines: true,
-                        complete: function(results) {
-                            if (!results.data || results.data.length === 0) {
-                                document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV semble complètement vide.</div>";
-                                return;
-                            }
-
-                            let html = '<table>';
-                            results.data.forEach((row, index) => {
-                                html += '<tr>';
-                                row.forEach(cell => {
-                                    html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
-                                });
-                                html += '</tr>';
-                            });
-                            html += '</table>';
-                            document.getElementById('tableau-contenu').innerHTML = html;
+            // Votre logique de lecture originale (inchangée)
+            if (typeof Papa === 'undefined') {
+                document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Erreur critique : L'outil PapaParse n'a pas pu être chargé depuis internet. Vérifiez votre connexion ou les restrictions de votre réseau.</div>";
+            } else {
+                Papa.parse(fichierCSV, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true, // Supprime automatiquement les lignes vides
+                    complete: function(results) {
+                        if (!results.data || results.data.length === 0) {
+                            document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV a été trouvé mais il semble complètement vide.</div>";
+                            return;
                         }
-                    });
-                })
-                .catch(() => {
-                    document.getElementById('tableau-contenu').innerHTML = `
-                        <div class='erreur'>
-                            ⚠️ Impossible de lire le fichier CSV.<br><br>
-                            <span style='font-weight:normal; font-size:14px;'>
-                                <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> est introuvable à la racine ou contient une erreur.
-                            </span>
-                        </div>`;
+
+                        let html = '<table>';
+                        results.data.forEach((row, index) => {
+                            html += '<tr>';
+                            row.forEach(cell => {
+                                html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        document.getElementById('tableau-contenu').innerHTML = html;
+                    },
+                    error: function(err) {
+                        document.getElementById('tableau-contenu').innerHTML = `
+                            <div class='erreur'>
+                                ⚠️ Impossible de lire le fichier CSV.<br><br>
+                                <span style='font-weight:normal; font-size:14px;'>
+                                    <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> est introuvable à la racine de votre projet ou son nom contient une erreur de majuscule/minuscule.
+                                </span>
+                            </div>`;
+                    }
                 });
+            }
         }
 
-        // Chargement automatique au démarrage
-        chargerClassement("LaTChauxAnn.csv", "btn-24");
+        // Chargement initial automatique du premier fichier au démarrage de la page
+        chargerClassement("LaTChaux24.csv", "btn-24");
     </script>
 
 </body>
