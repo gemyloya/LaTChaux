@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
-    <!-- LIEN DE SECOURS OFFICIEL POUR PAPAPARSE -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- Outil officiel de lecture de CSV -->
+    <script src="https://cloudflare.com"></script>
     <style>
-        /* BASE DE LA PAGE */
+        /* BASE DE LA PAGE - Version épurée */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 50px auto; 
@@ -17,23 +17,47 @@
             line-height: 1.5;
         }
         
-        /* TITRE PRINCIPAL */
-        h2 {
-            text-align: center;
-            font-size: 2.2rem;
-            color: #1e293b;
-            margin-bottom: 30px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+        /* TABLEAU MODERNE - Style carte avec coins arrondis */
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-top: 25px; 
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
+        
+        /* Espacement des cellules */
+        th, td { 
+            padding: 14px 18px; 
+            text-align: center; 
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 15px;
+        }
+        
+        /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
+        th:nth-child(2), td:nth-child(2) { text-align: left; }
+        
+        /* En-tête du tableau sombre et moderne */
+        th { 
+            background-color: #0f172a; 
+            color: #ffffff; 
+            font-weight: 600; 
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        
+        tr:nth-child(even) { background-color: #f8fafc; }
+        
+        /* Effet visuel discret au survol d'une ligne */
+        tr:hover td { background-color: #f1f5f9; }
+        
+        .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
 
-        /* ZONE DES BOUTONS */
-        .zone-boutons { 
-            margin: 30px 0; 
-            display: flex; 
-            justify-content: center;
-            gap: 15px; 
-        }
+        /* Style des boutons modernisés (Bleu pour le bouton actif) */
+        .zone-boutons { margin: 30px 0; display: flex; justify-content: center; gap: 15px; }
         
         .btn-classement { 
             background-color: #ffffff; 
@@ -51,7 +75,6 @@
         .btn-classement:hover { 
             background-color: #f1f5f9;
             color: #1e293b;
-            border-color: #cbd5e1;
         }
         
         .btn-classement.actif { 
@@ -60,62 +83,14 @@
             border-color: #3b82f6;
             box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
         }
-
-        /* TABLEAU MODERNE */
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin-top: 25px; 
-            background-color: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-        }
-        
-        th, td { 
-            padding: 14px 18px; 
-            text-align: center; 
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 15px;
-        }
-        
-        th:nth-child(2), td:nth-child(2) { 
-            text-align: left; 
-        }
-        
-        th { 
-            background-color: #0f172a; 
-            color: #ffffff; 
-            font-weight: 600; 
-            letter-spacing: 0.5px;
-            font-size: 14px;
-            text-transform: uppercase;
-            border-bottom: none;
-        }
-        
-        tr:nth-child(even) { 
-            background-color: #f8fafc; 
-        }
-        
-        tr:hover td {
-            background-color: #f1f5f9;
-        }
-        
-        .erreur { 
-            color: #991b1b; 
-            background: #fef2f2; 
-            padding: 16px; 
-            border-left: 4px solid #ef4444; 
-            margin-top: 20px; 
-            font-weight: bold; 
-            border-radius: 6px;
-        }
     </style>
 </head>
 <body>
 
-    <h2>La T'Chaux</h2>
+    <!-- CHANGEMENT TEXTUEL : Votre nouveau titre -->
+    <h2 style="text-align: center; font-size: 2.2rem; color: #1e293b; margin-bottom: 30px; font-weight: 800;">La T'Chaux</h2>
 
+    <!-- Zone des boutons ajoutée -->
     <div class="zone-boutons">
         <button class="btn-classement actif" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
         <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
@@ -124,18 +99,23 @@
     <div id="tableau-contenu">Chargement des données en cours...</div>
 
     <script>
+        // Fonction globale pour charger le fichier choisi
         function chargerClassement(fichierCSV, idBouton) {
+            // Indiquer visuellement le chargement
             document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
+
+            // Gérer la couleur verte du bouton actif
             document.querySelectorAll('.btn-classement').forEach(btn => btn.classList.remove('actif'));
             document.getElementById(idBouton).classList.add('actif');
 
+            // Votre logique de lecture originale (inchangée)
             if (typeof Papa === 'undefined') {
                 document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Erreur critique : L'outil PapaParse n'a pas pu être chargé depuis internet. Vérifiez votre connexion ou les restrictions de votre réseau.</div>";
             } else {
                 Papa.parse(fichierCSV, {
                     download: true,
                     header: false,
-                    skipEmptyLines: true,
+                    skipEmptyLines: true, // Supprime automatiquement les lignes vides
                     complete: function(results) {
                         if (!results.data || results.data.length === 0) {
                             document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV a été trouvé mais il semble complètement vide.</div>";
@@ -154,6 +134,7 @@
                         document.getElementById('tableau-contenu').innerHTML = html;
                     },
                     error: function(err) {
+                        // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
                         document.getElementById('tableau-contenu').innerHTML = `
                             <div class='erreur'>
                                 ⚠️ Impossible de lire le fichier CSV.<br><br>
@@ -166,6 +147,7 @@
             }
         }
 
+        // Chargement initial automatique du premier fichier au démarrage de la page
         chargerClassement("LaTChauxAnn.csv", "btn-24");
     </script>
 
