@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
     <!-- Outil officiel de lecture de CSV -->
-    <script src="https://cloudflare.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
@@ -17,20 +17,17 @@
         /* 2. FORCE la 2ème colonne (titre et cellules) à s'aligner à gauche */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        /* COULEUR MODIFIÉE : Gris ardoise moderne à la place du bleu nuit lourd */
-        th { background-color: #475569; color: #ffffff; font-weight: bold; }
+        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
 
         /* Style des boutons demandé par l'utilisateur */
         .zone-boutons { margin: 20px 0; display: flex; gap: 10px; }
+        .btn-classement { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-classement:hover { background-color: #34495e; }
         
-        /* COULEUR MODIFIÉE : Gris clair pour le bouton inactif */
-        .btn-classement { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; }
-        .btn-classement:hover { background-color: #e2e8f0; }
-        
-        /* COULEUR MODIFIÉE : Bleu royal moderne à la place du vert */
-        .btn-classement.actif { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        /* ÉTAPE 1 : Changement de la couleur verte par du bleu pour le bouton actif */
+        .btn-classement.actif { background-color: #3b82f6; }
     </style>
 </head>
 <body>
@@ -82,7 +79,6 @@
                         document.getElementById('tableau-contenu').innerHTML = html;
                     },
                     error: function(err) {
-                        // Si le fichier est introuvable ou bloqué, ce message s'affichera directement à l'écran
                         document.getElementById('tableau-contenu').innerHTML = `
                             <div class='erreur'>
                                 ⚠️ Impossible de lire le fichier CSV.<br><br>
