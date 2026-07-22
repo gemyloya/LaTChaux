@@ -11,8 +11,7 @@
             max-width: 600px; 
             padding: 0 20px; 
             color: #1e293b; 
-            /* Transition fluide pour le changement de couleur de fond */
-            transition: background-color 0.4s ease; 
+            transition: background-color 0.3s ease; 
         }
         
         /* TABLEAU */
@@ -29,7 +28,8 @@
         th, td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: center; }
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        th { background-color: #334155; color: #ffffff; font-weight: 600; }
+        /* Transition pour l'en-tête du tableau */
+        th { color: #ffffff; font-weight: 600; transition: background-color 0.3s ease; }
         tr:nth-child(even) { background-color: #f8fafc; }
         tr:hover td { background-color: #f1f5f9; }
         
@@ -38,7 +38,6 @@
         /* BOUTONS */
         .zone-boutons { margin: 25px 0; display: flex; justify-content: center; gap: 12px; }
         
-        /* Style par défaut des boutons quand ils ne sont pas cliqués (Gris clair) */
         .btn-classement { 
             background-color: #ffffff; 
             color: #64748b; 
@@ -52,19 +51,18 @@
         }
         .btn-classement:hover { background-color: #f1f5f9; }
         
-        /* Classes spécifiques pour l'activation des boutons */
+        /* IDENTITÉ 1 : BLEU SPORT */
         .btn-classement.actif-bleu { 
-            background-color: #3b82f6 !important; 
+            background-color: #1e40af !important; 
             color: white !important; 
-            border-color: #3b82f6 !important;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+            border-color: #1e40af !important;
         }
         
-        .btn-classement.actif-violet { 
-            background-color: #8b5cf6 !important; 
+        /* IDENTITÉ 2 : OR / PRESTIGE */
+        .btn-classement.actif-or { 
+            background-color: #d97706 !important; 
             color: white !important; 
-            border-color: #8b5cf6 !important;
-            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.3);
+            border-color: #d97706 !important;
         }
     </style>
 </head>
@@ -83,18 +81,27 @@
         function chargerClassement(fichierCSV, idBouton) {
             document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
             
-            // Nettoyage complet des styles actifs sur tous les boutons
             document.querySelectorAll('.btn-classement').forEach(btn => {
-                btn.classList.remove('actif-bleu', 'actif-violet');
+                btn.classList.remove('actif-bleu', 'actif-or');
             });
 
-            // Application du fond de page et de la couleur du bouton selon le fichier sélectionné
+            // Application des styles d'en-tête dynamiques (on injecte la couleur directement dans une balise <style> temporaire)
+            var styleHeader = document.getElementById('style-header-dynamique');
+            if (!styleHeader) {
+                styleHeader = document.createElement('style');
+                styleHeader.id = 'style-header-dynamique';
+                document.head.appendChild(styleHeader);
+            }
+
+            // Changement radical selon le bouton
             if (idBouton === 'btn-24') {
-                document.body.style.backgroundColor = "#eff6ff"; // Fond bleu très clair
+                document.body.style.backgroundColor = "#ffffff"; // Fond blanc propre
                 document.getElementById(idBouton).classList.add('actif-bleu');
+                styleHeader.innerHTML = "th { background-color: #1e40af !important; }"; // En-tête Tableau Bleu Nuit
             } else {
-                document.body.style.backgroundColor = "#faf5ff"; // Fond violet très clair
-                document.getElementById(idBouton).classList.add('actif-violet');
+                document.body.style.backgroundColor = "#fefcbf"; // Fond Jaune/Beige très clair et distinct
+                document.getElementById(idBouton).classList.add('actif-or');
+                styleHeader.innerHTML = "th { background-color: #78350f !important; }"; // En-tête Tableau Marron/Or Foncé
             }
 
             var xhr = new XMLHttpRequest();
@@ -129,7 +136,7 @@
                             document.getElementById('tableau-contenu').innerHTML = html;
                         }
                     } else {
-                        document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Impossible de lire le fichier <code>" + fichierCSV + "</code>. Vérifiez qu'il est bien présent à la racine de votre projet GitHub.</div>";
+                        document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Impossible de lire le fichier <code>" + fichierCSV + "</code>.</div>";
                     }
                 }
             };
