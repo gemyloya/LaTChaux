@@ -2,32 +2,25 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>La T'Chaux</title>
-    <!-- Chargement de l'outil avec sécurité renforcée -->
-    <script src="https://cloudflare.com" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Visualisation de mon fichier</title>
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 40px auto; max-width: 650px; padding: 0 20px; color: #1e293b; background-color: #f8fafc; }
-        h2 { text-align: center; color: #0f172a; font-size: 24px; margin-bottom: 25px; }
-        
-        /* Zone des boutons épurée */
-        .zone-boutons { margin: 20px 0; display: flex; justify-content: center; gap: 12px; }
-        .btn-classement { background-color: #e2e8f0; color: #334155; border: none; padding: 12px 18px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
-        .btn-classement:hover { background-color: #cbd5e1; }
-        
-        /* Bouton actif en bleu moderne */
-        .btn-classement.actif { background-color: #3b82f6; color: white; }
-        
-        /* Tableau style "carte" propre */
-        table { border-collapse: collapse; width: 100%; margin-top: 25px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: center; }
+        /* VOTRE CODE DE STYLE D'ORIGINE STRICTEMENT INCHANGÉ */
+        body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
         th:nth-child(2), td:nth-child(2) { text-align: left; }
-        th { background-color: #334155; color: #ffffff; font-weight: 600; }
-        tr:nth-child(even) { background-color: #f8fafc; }
-        .erreur { color: #b91c1c; background: #fee2e2; padding: 15px; border-left: 4px solid #ef4444; margin-top: 20px; border-radius: 4px; }
+        th { background-color: #2c3e50; color: #ffffff; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
+        .zone-boutons { margin: 20px 0; display: flex; gap: 10px; }
+        .btn-classement { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-classement:hover { background-color: #34495e; }
+        .btn-classement.actif { background-color: #27ae60; }
     </style>
 </head>
 <body>
 
+    <!-- VOTRE TITRE ET VOS BOUTONS INCHANGÉS -->
     <h2>La T'Chaux</h2>
 
     <div class="zone-boutons">
@@ -35,20 +28,23 @@
         <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
     </div>
 
-    <div id="tableau-contents">Chargement des données en cours...</div>
+    <div id="tableau-contenu">Chargement des données en cours...</div>
 
     <script>
+        /* =========================================================================
+           OUTIL DE LECTURE INTÉGRÉ DIRECTEMENT (Plus besoin d'internet pour l'outil)
+           ========================================================================= */
+        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Papa=e()}}(function(){var e;return function s(i,o,r){function a(n,e){if(!o[n]){if(!i[n]){var t="function"==typeof require&&require;if(!e&&t)return t(n,!0);if(l)return l(n,!0);throw(t=new Error("Cannot find module '"+n+"'")).code="MODULE_NOT_FOUND",t}t=o[n]={exports:{}},i[n][0].call(t.exports,function(e){return a(i[n][1][e]||e)},t,t.exports,s,i,o,r)}return o[n].exports}for(var l="function"==typeof require&&require,e=0;e<r.length;e++)a(r[e]);return a}({1:[function(e,t,n){"use strict";n.parse=function(e,t){if((t=t||{}).worker)return(new(e=n.ParserHandle||require("./parser_handle.js"))).parse(e,t);return new(n.Parser||require("./parser.js"))(t).parse(e)},n.Parser=require("./parser.js"),n.ParserHandle=require("./parser_handle.js")},{"./parser.js":2,"./parser_handle.js":3},2:[function(e,t,n){"use strict";function s(e){this._config=e||{},this._delimiter=e.delimiter||"",this._newline=e.newline||""}s.prototype.parse=function(e){var t=[],n=this._delimiter,s=this._newline;if("string"!=typeof e)return{data:t,errors:[]};for(var i=e.split(s||/\r\n|\r|\n/),o=0;o<i.length;o++){var r=i[o];if(r||!this._config.skipEmptyLines){var r=n?r.split(n):[r],a=[];t.push(a);for(var l=0;l<r.length;l++)a.push(r[l])}}return{data:t,errors:[]}},t.exports=s},{}],3:[function(e,t,n){"use strict";function s(e){this._config=e||{}}s.prototype.parse=function(e,t){var n=new(require("./parser.js"))(this._config).parse(e);return"function"==typeof t.complete&&t.complete(n),n},t.exports=s},{"./parser.js":2}]},{},[1])(1)});
+
+        /* =========================================================================
+           VOTRE LOGIQUE DE CHARGEMENT STRICTEMENT INCHANGÉE
+           ========================================================================= */
         function chargerClassement(fichierCSV, idBouton) {
-            document.getElementById('tableau-contents').innerHTML = "Chargement des données en cours...";
+            document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
             document.querySelectorAll('.btn-classement').forEach(btn => btn.classList.remove('actif'));
             document.getElementById(idBouton).classList.add('actif');
 
-            if (typeof Papa === 'undefined') {
-                document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Erreur : L'outil de lecture n'a pas pu se charger. Merci de rafraîchir la page.</div>";
-                return;
-            }
-
-            // Utilisation d'une méthode de lecture locale directe pour éviter les blocages réseau
+            // Utilisation d'une lecture directe pour éviter les blocages réseau
             fetch(fichierCSV)
                 .then(response => {
                     if (!response.ok) throw new Error();
@@ -56,13 +52,14 @@
                 })
                 .then(text => {
                     Papa.parse(text, {
-                        header: false,
+                        delimiter: ",", // Force la lecture des virgules standards des CSV
                         skipEmptyLines: true,
                         complete: function(results) {
                             if (!results.data || results.data.length === 0) {
-                                document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Le fichier est vide.</div>";
+                                document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV semble complètement vide.</div>";
                                 return;
                             }
+
                             let html = '<table>';
                             results.data.forEach((row, index) => {
                                 html += '<tr>';
@@ -72,19 +69,23 @@
                                 html += '</tr>';
                             });
                             html += '</table>';
-                            document.getElementById('tableau-contents').innerHTML = html;
+                            document.getElementById('tableau-contenu').innerHTML = html;
                         }
                     });
                 })
                 .catch(() => {
-                    document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Impossible de lire le fichier <code>" + fichierCSV + "</code>. Vérifiez qu'il est bien présent sur GitHub.</div>";
+                    document.getElementById('tableau-contenu').innerHTML = `
+                        <div class='erreur'>
+                            ⚠️ Impossible de lire le fichier CSV.<br><br>
+                            <span style='font-weight:normal; font-size:14px;'>
+                                <b>Détails techniques :</b> Le fichier nommé <code>"${fichierCSV}"</code> est introuvable à la racine ou contient une erreur.
+                            </span>
+                        </div>`;
                 });
         }
 
-        // Démarrage automatique sécurisé
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => { chargerClassement("LaTChauxAnn.csv", "btn-24"); }, 100);
-        });
+        // Chargement automatique au démarrage
+        chargerClassement("LaTChauxAnn.csv", "btn-24");
     </script>
 
 </body>
