@@ -26,9 +26,13 @@
         }
         
         th, td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: center; }
+        
+        /* ALIGNEMENT STRICTE DE VOS COLONNES */
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        /* Transition pour l'en-tête du tableau */
+        /* AMÉLIORATION : Style de la 1ère colonne (numéro de rang) en gras discret */
+        td:nth-child(1) { font-weight: bold; color: #64748b; }
+        
         th { color: #ffffff; font-weight: 600; transition: background-color 0.3s ease; }
         tr:nth-child(even) { background-color: #f8fafc; }
         tr:hover td { background-color: #f1f5f9; }
@@ -64,11 +68,15 @@
             color: white !important; 
             border-color: #d97706 !important;
         }
+
+        /* AMÉLIORATION : Texte de pied de page */
+        .pied-page { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 40px; font-weight: 500; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align: center; color: #0f172a;">La T'Chaux</h2>
+    <!-- AMÉLIORATION : Ajout d'une icône devant le titre -->
+    <h2 style="text-align: center; color: #0f172a;">🏆 La T'Chaux</h2>
 
     <div class="zone-boutons">
         <button class="btn-classement" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
@@ -76,6 +84,9 @@
     </div>
 
     <div id="tableau-contenu">Chargement des données en cours...</div>
+
+    <!-- AMÉLIORATION : Pied de page discret -->
+    <div class="pied-page">Classements officiels de La T'Chaux — Mis à jour en 2026</div>
 
     <script>
         function chargerClassement(fichierCSV, idBouton) {
@@ -85,7 +96,6 @@
                 btn.classList.remove('actif-bleu', 'actif-or');
             });
 
-            // Application des styles d'en-tête dynamiques (on injecte la couleur directement dans une balise <style> temporaire)
             var styleHeader = document.getElementById('style-header-dynamique');
             if (!styleHeader) {
                 styleHeader = document.createElement('style');
@@ -93,15 +103,14 @@
                 document.head.appendChild(styleHeader);
             }
 
-            // Changement radical selon le bouton
             if (idBouton === 'btn-24') {
-                document.body.style.backgroundColor = "#ffffff"; // Fond blanc propre
+                document.body.style.backgroundColor = "#ffffff"; 
                 document.getElementById(idBouton).classList.add('actif-bleu');
-                styleHeader.innerHTML = "th { background-color: #1e40af !important; }"; // En-tête Tableau Bleu Nuit
+                styleHeader.innerHTML = "th { background-color: #1e40af !important; }"; 
             } else {
-                document.body.style.backgroundColor = "#fefcbf"; // Fond Jaune/Beige très clair et distinct
+                document.body.style.backgroundColor = "#fefcbf"; 
                 document.getElementById(idBouton).classList.add('actif-or');
-                styleHeader.innerHTML = "th { background-color: #78350f !important; }"; // En-tête Tableau Marron/Or Foncé
+                styleHeader.innerHTML = "th { background-color: #78350f !important; }"; 
             }
 
             var xhr = new XMLHttpRequest();
