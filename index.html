@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
     <style>
-        /* BASE DE LA PAGE : Police moderne et fond légèrement adouci */
+        /* BASE DE LA PAGE */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 40px auto; 
             max-width: 600px; 
             padding: 0 20px; 
             color: #1e293b; 
-            background-color: #f8fafc;
+            /* Transition fluide pour le changement de couleur de fond */
+            transition: background-color 0.4s ease; 
         }
         
-        /* TABLEAU : Structure nette et ombrage léger */
+        /* TABLEAU */
         table { 
             border-collapse: collapse; 
             width: 100%; 
@@ -22,52 +23,57 @@
             background-color: #ffffff;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
         
         th, td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: center; }
         th:nth-child(2), td:nth-child(2) { text-align: left; }
         
-        /* COULEUR : En-tête gris ardoise moderne */
         th { background-color: #334155; color: #ffffff; font-weight: 600; }
         tr:nth-child(even) { background-color: #f8fafc; }
-        
-        /* EFFET : Survol de ligne discret */
         tr:hover td { background-color: #f1f5f9; }
         
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
 
-        /* BOUTONS : Alignement centré et espacement propre */
+        /* BOUTONS */
         .zone-boutons { margin: 25px 0; display: flex; justify-content: center; gap: 12px; }
         
-        /* STYLE : Bouton de base gris clair aux angles arrondis */
+        /* Style par défaut des boutons quand ils ne sont pas cliqués (Gris clair) */
         .btn-classement { 
-            background-color: #e2e8f0; 
-            color: #475569; 
+            background-color: #ffffff; 
+            color: #64748b; 
             border: 1px solid #cbd5e1; 
             padding: 10px 18px; 
             font-size: 14px; 
             font-weight: bold; 
             cursor: pointer; 
             border-radius: 6px; 
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
-        .btn-classement:hover { background-color: #cbd5e1; }
+        .btn-classement:hover { background-color: #f1f5f9; }
         
-        /* STYLE : Bouton sélectionné en bleu royal moderne */
-        .btn-classement.actif { 
-            background-color: #3b82f6; 
-            color: white; 
-            border-color: #3b82f6; 
+        /* Classes spécifiques pour l'activation des boutons */
+        .btn-classement.actif-bleu { 
+            background-color: #3b82f6 !important; 
+            color: white !important; 
+            border-color: #3b82f6 !important;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-classement.actif-violet { 
+            background-color: #8b5cf6 !important; 
+            color: white !important; 
+            border-color: #8b5cf6 !important;
+            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <h2>La T'Chaux</h2>
+    <h2 style="text-align: center; color: #0f172a;">La T'Chaux</h2>
 
     <div class="zone-boutons">
-        <button class="btn-classement actif" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
+        <button class="btn-classement" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
         <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
     </div>
 
@@ -76,8 +82,20 @@
     <script>
         function chargerClassement(fichierCSV, idBouton) {
             document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
-            document.querySelectorAll('.btn-classement').forEach(btn => btn.classList.remove('actif'));
-            document.getElementById(idBouton).classList.add('actif');
+            
+            // Nettoyage complet des styles actifs sur tous les boutons
+            document.querySelectorAll('.btn-classement').forEach(btn => {
+                btn.classList.remove('actif-bleu', 'actif-violet');
+            });
+
+            // Application du fond de page et de la couleur du bouton selon le fichier sélectionné
+            if (idBouton === 'btn-24') {
+                document.body.style.backgroundColor = "#eff6ff"; // Fond bleu très clair
+                document.getElementById(idBouton).classList.add('actif-bleu');
+            } else {
+                document.body.style.backgroundColor = "#faf5ff"; // Fond violet très clair
+                document.getElementById(idBouton).classList.add('actif-violet');
+            }
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", fichierCSV, true);
