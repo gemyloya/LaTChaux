@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>La T'Chaux</title>
+    <!-- Chargement de l'outil avec sécurité renforcée -->
+    <script src="https://cloudflare.com" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 40px auto; max-width: 650px; padding: 0 20px; color: #1e293b; background-color: #f8fafc; }
+        h2 { text-align: center; color: #0f172a; font-size: 24px; margin-bottom: 25px; }
+        
+        /* Zone des boutons épurée */
+        .zone-boutons { margin: 20px 0; display: flex; justify-content: center; gap: 12px; }
+        .btn-classement { background-color: #e2e8f0; color: #334155; border: none; padding: 12px 18px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+        .btn-classement:hover { background-color: #cbd5e1; }
+        
+        /* Bouton actif en bleu moderne */
+        .btn-classement.actif { background-color: #3b82f6; color: white; }
+        
+        /* Tableau style "carte" propre */
+        table { border-collapse: collapse; width: 100%; margin-top: 25px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: center; }
+        th:nth-child(2), td:nth-child(2) { text-align: left; }
+        th { background-color: #334155; color: #ffffff; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .erreur { color: #b91c1c; background: #fee2e2; padding: 15px; border-left: 4px solid #ef4444; margin-top: 20px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <h2>La T'Chaux</h2>
+
+    <div class="zone-boutons">
+        <button class="btn-classement actif" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
+        <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
+    </div>
+
+    <div id="tableau-contents">Chargement des données en cours...</div>
+
+    <script>
+        function chargerClassement(fichierCSV, idBouton) {
+            document.getElementById('tableau-contents').innerHTML = "Chargement des données en cours...";
+            document.querySelectorAll('.btn-classement').forEach(btn => btn.classList.remove('actif'));
+            document.getElementById(idBouton).classList.add('actif');
+
+            if (typeof Papa === 'undefined') {
+                document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Erreur : L'outil de lecture n'a pas pu se charger. Merci de rafraîchir la page.</div>";
+                return;
+            }
+
+            // Utilisation d'une méthode de lecture locale directe pour éviter les blocages réseau
+            fetch(fichierCSV)
+                .then(response => {
+                    if (!response.ok) throw new Error();
+                    return response.text();
+                })
+                .then(text => {
+                    Papa.parse(text, {
+                        header: false,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            if (!results.data || results.data.length === 0) {
+                                document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Le fichier est vide.</div>";
+                                return;
+                            }
+                            let html = '<table>';
+                            results.data.forEach((row, index) => {
+                                html += '<tr>';
+                                row.forEach(cell => {
+                                    html += index === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+                                });
+                                html += '</tr>';
+                            });
+                            html += '</table>';
+                            document.getElementById('tableau-contents').innerHTML = html;
+                        }
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('tableau-contents').innerHTML = "<div class='erreur'>⚠️ Impossible de lire le fichier <code>" + fichierCSV + "</code>. Vérifiez qu'il est bien présent sur GitHub.</div>";
+                });
+        }
+
+        // Démarrage automatique sécurisé
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { chargerClassement("LaTChauxAnn.csv", "btn-24"); }, 100);
+        });
+    </script>
+
+</body>
+</html>
