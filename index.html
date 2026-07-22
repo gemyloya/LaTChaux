@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Visualisation de mon fichier</title>
     <!-- Outil officiel de lecture de CSV -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cloudflare.com"></script>
     <style>
         /* CHANGEMENT COSMÉTIQUE : Centrage et largeur maximale à 1000px */
         body { font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 20px; color: #333; }
@@ -30,13 +30,13 @@
 </head>
 <body>
 
-    <!-- CHANGEMENT TEXTUEL : Votre nouveau titre -->
-    <h2>… et alors, le classement mooooonnnndiiiallllllllll</h2>
+    <!-- AJUSTEMENT TEXTUEL : Votre nouveau titre -->
+    <h2>La T'Chaux</h2>
 
-    <!-- Zone des boutons ajoutée -->
+    <!-- Zone des boutons inversée et renommée selon vos souhaits -->
     <div class="zone-boutons">
-        <button class="btn-classement actif" id="btn-24" onclick="chargerClassement('LaTChaux24.csv', 'btn-24')">Classement 2024</button>
-        <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-ann')">Classement Annuel</button>
+        <button class="btn-classement actif" id="btn-ann" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-ann')">Classement 2026</button>
+        <button class="btn-classement" id="btn-24" onclick="chargerClassement('LaTChaux24.csv', 'btn-24')">Classement mooonndiiallllll</button>
     </div>
 
     <div id="tableau-contenu">Chargement des données en cours...</div>
@@ -89,8 +89,8 @@
             }
         }
 
-        // Chargement initial automatique du premier fichier au démarrage de la page
-        chargerClassement("LaTChaux24.csv", "btn-24");
+        // AJUSTEMENT INITIAL : Chargement automatique du classement annuel (2026) au démarrage
+        chargerClassement("LaTChauxAnn.csv", "btn-ann");
     </script>
 
 </body>
