@@ -30,10 +30,10 @@
 </head>
 <body>
 
-    <!-- AJUSTEMENT TEXTUEL : Votre nouveau titre -->
+    <!-- CHANGEMENT TEXTUEL : Votre nouveau titre -->
     <h2>La T'Chaux</h2>
 
-    <!-- Zone des boutons inversée et renommée selon vos souhaits -->
+    <!-- Zone des boutons ajoutée -->
     <div class="zone-boutons">
         <button class="btn-classement actif" id="btn-ann" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-ann')">Classement 2026</button>
         <button class="btn-classement" id="btn-24" onclick="chargerClassement('LaTChaux24.csv', 'btn-24')">Classement mooonndiiallllll</button>
@@ -89,7 +89,7 @@
             }
         }
 
-        // AJUSTEMENT INITIAL : Chargement automatique du classement annuel (2026) au démarrage
+        // Chargement initial automatique du premier fichier au démarrage de la page
         chargerClassement("LaTChauxAnn.csv", "btn-ann");
     </script>
 
