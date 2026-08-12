@@ -2,11 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <!-- LA TOUCHE MOBILE : Adapte automatiquement le tableau sur smartphone -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualisation de mon fichier</title>
     <style>
-        /* BASE DE LA PAGE */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 40px auto; 
@@ -15,91 +13,50 @@
             color: #1e293b; 
             transition: background-color 0.3s ease; 
         }
-        
-        /* TABLEAU */
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin-top: 25px; 
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        .zone-recherche { margin: 20px 0; display: flex; justify-content: center; }
+        .input-recherche {
+            width: 100%; max-width: 400px; padding: 10px 16px; font-size: 15px;
+            border: 1px solid #cbd5e1; border-radius: 8px; outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s ease;
         }
-        
+        .input-recherche:focus { border-color: #64748b; box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15); }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         th, td { border: 1px solid #e2e8f0; padding: 10px 14px; text-align: center; }
-        
-        /* ALIGNEMENT STRICTE DE VOS COLONNES */
         th:nth-child(3), td:nth-child(3) { text-align: left; }
-        
         th { color: #ffffff; font-weight: 600; transition: background-color 0.3s ease; }
         tr:nth-child(even) { background-color: #f8fafc; }
         tr:hover td { background-color: #f1f5f9; }
-        
         .erreur { color: #d32f2f; background: #ffebee; padding: 15px; border-left: 5px solid #d32f2f; margin-top: 20px; font-weight: bold; }
-
-        /* BOUTONS */
-        .zone-boutons { margin: 25px 0; display: flex; justify-content: center; gap: 12px; }
-        
-        .btn-classement { 
-            background-color: #ffffff; 
-            color: #64748b; 
-            border: 1px solid #cbd5e1; 
-            padding: 10px 18px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            transition: all 0.3s ease;
-        }
+        .zone-boutons { margin: 25px 0 15px 0; display: flex; justify-content: center; gap: 12px; }
+        .btn-classement { background-color: #ffffff; color: #64748b; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; transition: all 0.3s ease; }
         .btn-classement:hover { background-color: #f1f5f9; }
-        
-        /* IDENTITÉ 1 : BLEU SPORT */
-        .btn-classement.actif-bleu { 
-            background-color: #1e40af !important; 
-            color: white !important; 
-            border-color: #1e40af !important;
-        }
-        
-        /* IDENTITÉ 2 : OR / PRESTIGE */
-        .btn-classement.actif-or { 
-            background-color: #d97706 !important; 
-            color: white !important; 
-            border-color: #d97706 !important;
-        }
-
-        /* PIED DE PAGE */
+        .btn-classement.actif-bleu { background-color: #1e40af !important; color: white !important; border-color: #1e40af !important; }
+        .btn-classement.actif-or { background-color: #d97706 !important; color: white !important; border-color: #d97706 !important; }
+        #btn-top { position: fixed; bottom: 30px; right: 30px; z-index: 99; background-color: #334155; color: white; border: none; outline: none; cursor: pointer; padding: 12px 16px; border-radius: 50px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: none; transition: all 0.2s ease; }
+        #btn-top:hover { background-color: #0f172a; transform: translateY(-2px); }
         .pied-page { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 40px; font-weight: 500; }
     </style>
 </head>
 <body>
-
     <h2 style="text-align: center; color: #0f172a;">🏆 La T'Chaux</h2>
-
     <div class="zone-boutons">
         <button class="btn-classement" id="btn-24" onclick="chargerClassement('LaTChauxAnn.csv', 'btn-24')">Classement 2026</button>
         <button class="btn-classement" id="btn-ann" onclick="chargerClassement('LaTChaux24.csv', 'btn-ann')">Classement Moonndiiaaaallll</button>
     </div>
-
+    <div class="zone-recherche">
+        <input type="text" id="recherche-input" class="input-recherche" onkeyup="filtrerTableau()" placeholder="🔍 Rechercher un nom...">
+    </div>
     <div id="tableau-contenu">Chargement des données en cours...</div>
-
+    <button onclick="remonterEnHaut()" id="btn-top" title="Retour en haut">↑</button>
     <div class="pied-page">Classements officiels de La T'Chaux — Mis à jour le <span id="date-du-jour"></span></div>
 
-    <script>
+        <script>
         function chargerClassement(fichierCSV, idBouton) {
             document.getElementById('tableau-contenu').innerHTML = "Chargement des données en cours...";
-            
-            document.querySelectorAll('.btn-classement').forEach(btn => {
-                btn.classList.remove('actif-bleu', 'actif-or');
-            });
-
+            document.getElementById('recherche-input').value = "";
+            document.querySelectorAll('.btn-classement').forEach(btn => { btn.classList.remove('actif-bleu', 'actif-or'); });
             var styleHeader = document.getElementById('style-header-dynamique');
-            if (!styleHeader) {
-                styleHeader = document.createElement('style');
-                styleHeader.id = 'style-header-dynamique';
-                document.head.appendChild(styleHeader);
-            }
-
+            if (!styleHeader) { styleHeader = document.createElement('style'); styleHeader.id = 'style-header-dynamique'; document.head.appendChild(styleHeader); }
             if (idBouton === 'btn-24') {
                 document.body.style.backgroundColor = "#ffffff"; 
                 document.getElementById(idBouton).classList.add('actif-bleu');
@@ -109,55 +66,53 @@
                 document.getElementById(idBouton).classList.add('actif-or');
                 styleHeader.innerHTML = "th { background-color: #78350f !important; }"; 
             }
-
             var xhr = new XMLHttpRequest();
             xhr.open("GET", fichierCSV, true);
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        var lignes = xhr.responseText.split(/\r\n|\n/);
-                        var html = '<table>';
-                        var lignesCrees = 0;
-
-                        for (var i = 0; i < lignes.length; i++) {
-                            if (lignes[i].trim() === "") continue;
-                            
-                            var cellules = lignes[i].split(",");
-                            html += '<tr>';
-                            for (var j = 0; j < cellules.length; j++) {
-                                if (lignesCrees === 0) {
-                                    html += '<th>' + cellules[j] + '</th>';
-                                } else {
-                                    html += '<td>' + cellules[j] + '</td>';
-                                }
-                            }
-                            html += '</tr>';
-                            lignesCrees++;
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var lignes = xhr.responseText.split(/\r\n|\n/);
+                    var html = '<table id="mon-tableau">';
+                    var lignesCrees = 0;
+                    for (var i = 0; i < lignes.length; i++) {
+                        if (lignes[i].trim() === "") continue;
+                        var cellules = lignes[i].split(",");
+                        html += '<tr>';
+                        for (var j = 0; j < cellules.length; j++) {
+                            if (lignesCrees === 0) { html += '<th>' + cellules[j] + '</th>'; } 
+                            else { html += '<td>' + cellules[j] + '</td>'; }
                         }
-                        html += '</table>';
-                        
-                        if (lignesCrees === 0) {
-                            document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Le fichier CSV a été trouvé mais il semble vide.</div>";
-                        } else {
-                            document.getElementById('tableau-contenu').innerHTML = html;
-                        }
-                    } else {
-                        document.getElementById('tableau-contenu').innerHTML = "<div class='erreur'>⚠️ Impossible de lire le fichier <code>" + fichierCSV + "</code>.</div>";
+                        html += '</tr>';
+                        lignesCrees++;
                     }
+                    html += '</table>';
+                    document.getElementById('tableau-contenu').innerHTML = html;
                 }
             };
             xhr.send();
         }
-
-        // Calcul de la date du jour
+        function filtrerTableau() {
+            var filtre = document.getElementById("recherche-input").value.toLowerCase();
+            var tableau = document.getElementById("mon-tableau");
+            if (!tableau) return;
+            var lignes = tableau.getElementsByTagName("tr");
+            for (var i = 1; i < lignes.length; i++) {
+                var cellules = lignes[i].getElementsByTagName("td");
+                var trouve = false;
+                for (var j = 0; j < cellules.length; j++) {
+                    if (cellules[j] && cellules[j].textContent.toLowerCase().indexOf(filtre) > -1) { trouve = true; break; }
+                }
+                lignes[i].style.display = trouve ? "" : "none";
+            }
+        }
+        window.onscroll = function() {
+            var btnTop = document.getElementById("btn-top");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btnTop.style.display = "block"; } 
+            else { btnTop.style.display = "none"; }
+        };
+        function remonterEnHaut() { window.scrollTo({top: 0, behavior: 'smooth'}); }
         var aujourdhui = new Date();
-        var jj = String(aujourdhui.getDate()).padStart(2, '0');
-        var mm = String(aujourdhui.getMonth() + 1).padStart(2, '0');
-        var aaaa = aujourdhui.getFullYear();
-        document.getElementById('date-du-jour').innerText = jj + '/' + mm + '/' + aaaa;
-
+        document.getElementById('date-du-jour').innerText = String(aujourdhui.getDate()).padStart(2, '0') + '/' + String(aujourdhui.getMonth() + 1).padStart(2, '0') + '/' + aujourdhui.getFullYear();
         chargerClassement("LaTChauxAnn.csv", "btn-24");
     </script>
-
 </body>
 </html>
