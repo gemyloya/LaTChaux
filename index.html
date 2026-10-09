@@ -110,9 +110,28 @@
             else { btnTop.style.display = "none"; }
         };
         function remonterEnHaut() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+       // On demande à GitHub la date de modification du fichier CSV
+fetch("https://github.com")
+    .then(response => response.json())
+    .then(commits => {
+        var dateModif = new Date(); 
+        
+        if (commits && commits.length > 0) {
+            // Si GitHub répond, on prend la vraie date de modification
+            dateModif = new Date(commits[0].commit.committer.date);
+        }
+
+        // On affiche cette date dans votre élément HTML
+        document.getElementById('date-du-jour').innerText = String(dateModif.getDate()).padStart(2, '0') + '/' + String(dateModif.getMonth() + 1).padStart(2, '0') + '/' + dateModif.getFullYear();
+    })
+    .catch(err => {
+        // En cas de problème réseau, on met la date du jour par sécurité
         var aujourdhui = new Date();
         document.getElementById('date-du-jour').innerText = String(aujourdhui.getDate()).padStart(2, '0') + '/' + String(aujourdhui.getMonth() + 1).padStart(2, '0') + '/' + aujourdhui.getFullYear();
-        chargerClassement("LaTChauxAnn.csv", "btn-24");
+    });
+
+// Votre fonction d'origine pour charger le classement reste ici, inchangée
+chargerClassement("LaTChauxAnn.csv", "btn-24");
     </script>
 </body>
 </html>
