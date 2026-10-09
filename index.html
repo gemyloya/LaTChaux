@@ -110,27 +110,25 @@
             else { btnTop.style.display = "none"; }
         };
         function remonterEnHaut() { window.scrollTo({top: 0, behavior: 'smooth'}); }
-       // On demande à GitHub la date de modification du fichier CSV
-fetch("https://github.com")
-    .then(response => response.json())
-    .then(commits => {
-        var dateModif = new Date(); 
+     // On demande au serveur GitHub Pages la date du fichier CSV qu'il héberge
+fetch("LaTChauxAnn.csv", { method: "HEAD" })
+    .then(response => {
+        // On récupère l'en-tête de modification fourni par GitHub
+        var lastModifiedHeader = response.headers.get("Last-Modified");
         
-        if (commits && commits.length > 0) {
-            // Si GitHub répond, on prend la vraie date de modification
-            dateModif = new Date(commits[0].commit.committer.date);
-        }
+        // Si GitHub nous la donne, on l'utilise. Sinon, date du jour par sécurité
+        var dateModif = lastModifiedHeader ? new Date(lastModifiedHeader) : new Date();
 
-        // On affiche cette date dans votre élément HTML
+        // Votre code d'affichage d'origine, inchangé
         document.getElementById('date-du-jour').innerText = String(dateModif.getDate()).padStart(2, '0') + '/' + String(dateModif.getMonth() + 1).padStart(2, '0') + '/' + dateModif.getFullYear();
     })
     .catch(err => {
-        // En cas de problème réseau, on met la date du jour par sécurité
+        console.error("Erreur de lecture de la date :", err);
         var aujourdhui = new Date();
         document.getElementById('date-du-jour').innerText = String(aujourdhui.getDate()).padStart(2, '0') + '/' + String(aujourdhui.getMonth() + 1).padStart(2, '0') + '/' + aujourdhui.getFullYear();
     });
 
-// Votre fonction d'origine pour charger le classement reste ici, inchangée
+// Votre ligne de chargement d'origine, strictement inchangée
 chargerClassement("LaTChauxAnn.csv", "btn-24");
     </script>
 </body>
